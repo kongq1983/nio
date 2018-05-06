@@ -22,21 +22,29 @@ public class NIOServer {
         ServerSocket serverSocket = channel.socket();
         InetSocketAddress address = new InetSocketAddress(SERVER_PORT);
         serverSocket.bind(address);
+        System.out.println("Server listen port : "+SERVER_PORT);
+        System.out.println("Server Channel Wait Client Connect .");
         channel.register(this.selector,SelectionKey.OP_ACCEPT);
+        System.out.println("init end----------------------");
+
     }
 
     public void start() throws Exception{
+        System.out.println("start method ---------------------");
         while(true) {
             this.selector.select(); //此方法会阻塞，直到至少有一个已注册的事件发生
+            System.out.println("event is coming , keys="+this.selector.selectedKeys());
             Iterator<SelectionKey> ite = this.selector.selectedKeys().iterator();
 
             while (ite.hasNext()) {
                 SelectionKey key = (SelectionKey)ite.next();
                 ite.remove(); //从集合中移除即将处理的SelectionKey，避免重复处理
                 if(key.isAcceptable()){ //客户端请求链接事件
-
+                    System.out.println("处理链接事件");
+                    this.accept(key);
                 }else if(key.isReadable()) { //读事件
-
+                    System.out.println("处理读事件");
+                    this.read(key);
                 }
             }
 
@@ -47,6 +55,7 @@ public class NIOServer {
         ServerSocketChannel server = (ServerSocketChannel) key.channel();
         SocketChannel channel = server.accept(); //接收链接
         channel.configureBlocking(false);//设置为非阻塞
+        System.out.println("开始注册读事件");
         channel.register(this.selector,SelectionKey.OP_READ);//为通道注册读事件
     }
 

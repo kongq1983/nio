@@ -24,7 +24,7 @@ public class NIOClient {
         channel.register(selector,SelectionKey.OP_CONNECT); //注册connetct事件
     }
 
-    public void start() throws IOException {
+    public void start() throws Exception {
         while(true) {
             selector.select(); //此方法会阻塞，直到至少有一个已注册的事件发生
             Iterator<SelectionKey> ite = this.selector.selectedKeys().iterator(); //获取发生事件的selectionKey对象集合
@@ -33,9 +33,9 @@ public class NIOClient {
                 SelectionKey key = (SelectionKey)ite.next();
                 ite.remove();
                 if(key.isConnectable()) { //链接事件
-
+                    this.connect(key);
                 } else if(key.isReadable()) {
-
+                    this.read(key);
                 }
             }
         }
@@ -44,12 +44,17 @@ public class NIOClient {
     public void connect(SelectionKey key) throws Exception {
         SocketChannel channel = (SocketChannel)key.channel();
         if(channel.isConnectionPending()) { //如果正在链接
+            System.out.println("正在连接服务器.");
             if(channel.finishConnect()) { //完成链接
+                System.out.println("连接服务器成功.");
                 channel.configureBlocking(false);
                 channel.register(this.selector,SelectionKey.OP_READ); //注册读事件
+                System.out.println("-------------1----------");
                 String request = clientInput.readLine(); //输入客户端请求
+                System.out.println("-------------requestdata----------"+request);
                 channel.write(ByteBuffer.wrap(request.getBytes())); //发送到服务端
             }else {
+                System.out.println("deal  key channel");
                 key.channel();
             }
         }
@@ -66,7 +71,7 @@ public class NIOClient {
         channe.write(outBuffer); //将请求发送到服务端
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         NIOClient client = new NIOClient();
         client.init();
         client.start();
