@@ -1,5 +1,6 @@
 package com.kq.nio.server;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.ByteBuffer;
@@ -42,10 +43,21 @@ public class NIOServer {
                 if (key.isAcceptable()) { //客户端请求链接事件
                     System.out.println("处理链接事件");
                     this.accept(key);
-                } else if (key.isReadable()) { //读事件
+                } else if (key.isValid() && key.isReadable()) { //读事件
                     System.out.println("处理读事件");
-                    this.read(key);
-                } else if (key.isWritable()) {
+                    SocketChannel channel = (SocketChannel) key.channel();
+                    try{
+                        this.read(channel,key);
+                    }catch (IOException e){
+                        System.out.println("----------------read exception---------------key=---"+key);
+                        e.printStackTrace();
+
+                        key.cancel();
+                        channel.socket().close();
+                        channel.close();
+
+                    }
+                } else if (key.isValid() && key.isWritable()) {
                     System.out.println("writable--------------");
                 }
             }
@@ -67,8 +79,7 @@ public class NIOServer {
 
     }
 
-    private void read(SelectionKey key) throws Exception {
-        SocketChannel channel = (SocketChannel) key.channel();
+    private void read(SocketChannel channel,SelectionKey key) throws Exception {
         ByteBuffer buffer = ByteBuffer.allocate(1024); //创建读取的缓冲区
         channel.read(buffer); //读取数据
         String request = new String(buffer.array()).trim();
