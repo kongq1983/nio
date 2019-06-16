@@ -1,5 +1,7 @@
 package com.kq.nio.buffer;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.nio.CharBuffer;
 
 public class CharBufferTest {
@@ -22,6 +24,8 @@ public class CharBufferTest {
             System.out.println(s);
         }
 
+
+        System.out.println(StringUtils.join(new String[]{"1","2"},"-"));
         System.out.println("-----------------------------------------");
     }
 
