@@ -33,10 +33,11 @@ public class KeepAliveServer {
         while (true) {
             //阻塞，直到事件通知才会返回
             selector.select();
-
+            System.out.println("111111111111111111111111111111111111");
             Set<SelectionKey> selectionKeys = selector.selectedKeys();
             Iterator<SelectionKey> iterator = selectionKeys.iterator();
             while (iterator.hasNext()) {
+                System.out.println("2222222222222222222222222222222222222");
                 SelectionKey key = iterator.next();
                 iterator.remove();
 
@@ -46,22 +47,43 @@ public class KeepAliveServer {
                     socketChannel.register(selector, SelectionKey.OP_READ);
                     System.out.println("收到新连接：" + socketChannel);
                 } else if (key.isReadable()) {// 客户端连接有数据可以读时触发
+                    SocketChannel socketChannel = (SocketChannel) key.channel();
                     try {
-                        SocketChannel socketChannel = (SocketChannel) key.channel();
 
+                        System.out.println("----------------------------------");
                         ByteBuffer requestBuffer = ByteBuffer.allocate(10);
-                        while (socketChannel.isOpen() && socketChannel.read(requestBuffer) != -1) {
+                        int isEnd = -1;
+                        while (socketChannel.isOpen() && (isEnd=socketChannel.read(requestBuffer)) != -1) {
+                            System.out.println("================================");
                             // 长连接情况下
                             read(requestBuffer,socketChannel);
+                            //  // 长连接情况下,需要手动判断数据有没有读取结束 (此处做一个简单的判断: 超过0字节就认为请求结束了)
+                            if (requestBuffer.position() > 0) break;
 
                         }
-                        if (requestBuffer.position() == 0) continue; // 如果没数据了, 则不继续后面的处理
 
-                        read(requestBuffer,socketChannel);
+                        if(isEnd==-1){
+                            // mac
+                            // Process finished with exit code 130 (interrupted by signal 2: SIGNINT)
+                            key.cancel();
+                            System.out.println("---------------break--------------");
+                            break;
+                        }
+
+                        System.out.println("********************************");
+//                        if (requestBuffer.position() == 0) {
+//
+//                            continue; // 如果没数据了, 则不继续后面的处理
+//                        }
+
+//                        read(requestBuffer,socketChannel);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         key.cancel();
+                        socketChannel.socket().close();
+                        socketChannel.close();
+
                     }
                 }
 
@@ -75,9 +97,12 @@ public class KeepAliveServer {
         requestBuffer.flip();
         byte[] content = new byte[requestBuffer.remaining()];
         requestBuffer.get(content);
+
         System.out.println(new String(content));
 
         String contentstr = new String(content);
+
+        System.out.println("limit="+requestBuffer.limit()+" pos="+requestBuffer.position());
 
         System.out.println("收到数据："+contentstr+"，来自：" + socketChannel.getRemoteAddress());
     }
