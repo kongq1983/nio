@@ -3,6 +3,7 @@ package com.kq.nio.keepalive;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -24,7 +25,8 @@ public class KeepAliveClient {
         Selector selector = Selector.open();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector, SelectionKey.OP_CONNECT);
-        socketChannel.connect(new InetSocketAddress("localhost", KeepAliveServer.port));
+        socketChannel.connect(new InetSocketAddress("192.168.3.107", KeepAliveServer.port));
+//        socketChannel.connect(new InetSocketAddress("localhost", KeepAliveServer.port));
 
         Random random = new Random();
 
@@ -46,15 +48,22 @@ public class KeepAliveClient {
 
                 } else if (selectionKey.isWritable()) {// 可以开始写数据
 
-                    int foreach = random.nextInt(5);
+                    int foreach = random.nextInt(2);
 
                     for(int i=0;i<foreach;i++) {
                         ByteBuffer sendBuffer = ByteBuffer.allocate(10);
-                        String data = RandomStringUtils.random(10);
-                        sendBuffer.put(data.getBytes());
-                        socketChannel.write(sendBuffer);
 
-                        System.out.println("sendData="+data);
+                        byte[] bs = new byte[]{1,2,3,4,5,6,7,8,9,0};
+
+//                        String data = RandomStringUtils.random(10);
+                        sendBuffer.put(bs);
+
+                        ByteBuffer buffer = ByteBuffer.wrap("12345678901".getBytes());
+
+//                        socketChannel.write(sendBuffer);
+                        socketChannel.write(buffer);
+
+                        System.out.println("sendData="+new String(bs));
 
                     }
 
