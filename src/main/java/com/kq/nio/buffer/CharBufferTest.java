@@ -24,8 +24,6 @@ public class CharBufferTest {
             System.out.println(s);
         }
 
-
-        System.out.println(StringUtils.join(new String[]{"1","2"},"-"));
         System.out.println("-----------------------------------------");
     }
 

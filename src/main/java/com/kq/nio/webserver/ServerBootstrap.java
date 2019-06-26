@@ -17,7 +17,8 @@ public class ServerBootstrap {
     // 主线程，处理客户端的连接
     private ReactorThread mainReactor;
     // 子线程(I/O线程)，处理客户端的请求
-    private ReactorThread[] subReactor = new ReactorThread[8];
+//    private ReactorThread[] subReactor = new ReactorThread[8];
+    private ReactorThread[] subReactor = new ReactorThread[2];
 
     // 主线程的事件处理器
     private ChannelHandler handler;

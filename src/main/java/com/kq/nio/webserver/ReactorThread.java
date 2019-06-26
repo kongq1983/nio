@@ -32,6 +32,8 @@ public abstract class ReactorThread extends Thread {
             try {
                 selector.select(1000);
 
+                System.out.println(Thread.currentThread().getName()+"--------------------------------------");
+
                 // 获取查询结果
                 Set<SelectionKey> selected = selector.selectedKeys();
                 // 遍历查询结果
