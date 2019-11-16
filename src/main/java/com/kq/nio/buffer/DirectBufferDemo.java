@@ -1,5 +1,7 @@
 package com.kq.nio.buffer;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -17,6 +19,8 @@ public class DirectBufferDemo {
         System.out.println("byteBuffer isDirect = "+byteBuffer.isDirect());
         // FALSE
         System.out.println("byteBuffer1 isDirect = "+byteBuffer1.isDirect());
+
+
     }
 
 }
