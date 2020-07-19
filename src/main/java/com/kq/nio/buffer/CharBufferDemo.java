@@ -25,7 +25,7 @@ public class CharBufferDemo {
         buffer.put(0,'o');
         buffer.put(1,'p');
         buffer.put(2,'q');
-        buffer.put(3,'r');  //  此位置是不可读 不可写  上面设置了limit(3)
+        buffer.put(3,'r');  //  此位置是不可读 不可写  上面设置了limit(3) 这里会报错
         buffer.put(4,'s');
         buffer.put(5,'t');
         buffer.put(6,'u');

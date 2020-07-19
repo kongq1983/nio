@@ -6,21 +6,19 @@ import java.nio.CharBuffer;
 
 public class CharBufferTest {
 
-    private CharBuffer buffe;
-
     public static void main(String[] args) {
-        CharBuffer buffe = CharBuffer.allocate(20);
+        CharBuffer buffer = CharBuffer.allocate(20);
         String str = "welcome to you!";
         for (int i=0;i<str.length();i++) {
             String s = str.substring(i,i+1);
 //            System.out.println(str.substring(i,i+1));
-            buffe.put(s);
+            buffer.put(s); //1个1个put放到buffer
 
         }
-       buffe.flip();
+       buffer.flip(); // position设置为0
 
-        while (buffe.hasRemaining()){
-            char s = buffe.get();
+        while (buffer.hasRemaining()){ // position < limit
+            char s = buffer.get(); //1个1个读出来
             System.out.println(s);
         }
 
