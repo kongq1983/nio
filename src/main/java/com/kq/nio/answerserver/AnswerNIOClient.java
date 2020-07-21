@@ -122,6 +122,8 @@ public class AnswerNIOClient implements MyRunnable {
         socketChannel.write(byteBuffer);
         System.out.println("AnswerNIOClient 发送查询答案！ questionId="+questionId);
 
+        socketChannel.register(this.selector,SelectionKey.OP_READ);
+
     }
 
 
