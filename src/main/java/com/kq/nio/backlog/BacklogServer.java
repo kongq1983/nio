@@ -13,7 +13,7 @@ public class BacklogServer {
         Thread.sleep(5000);
 
         for(int i=0;i<100;i++) {
-            System.out.println("accept begin "+(i+1));
+            System.out.println("accept waif for connection "+(i+1));
             Socket socket = serverSocket.accept();
             System.out.println("accept end "+(i+1));
         }

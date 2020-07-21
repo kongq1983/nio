@@ -27,7 +27,9 @@ public class Handler {
 
         while (socketChannel.isOpen() && socketChannel.read(requestBuffer) != -1) {
             // 长连接情况下,需要手动判断数据有没有读取结束 (此处做一个简单的判断: 超过0字节就认为请求结束了)
-            if (requestBuffer.position() > 0) break;
+            if (requestBuffer.position() > 0) {
+                break;
+            }
         }
         if (requestBuffer.position() == 0) return; // 如果没数据了, 则不继续后面的处理
 

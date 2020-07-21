@@ -25,7 +25,8 @@ public class KeepAliveClient {
         Selector selector = Selector.open();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector, SelectionKey.OP_CONNECT);
-        socketChannel.connect(new InetSocketAddress("192.168.3.107", KeepAliveServer.port));
+        socketChannel.connect(new InetSocketAddress("192.168.1.148", KeepAliveServer.port));
+//        socketChannel.connect(new InetSocketAddress("192.168.3.107", KeepAliveServer.port));
 //        socketChannel.connect(new InetSocketAddress("localhost", KeepAliveServer.port));
 
         Random random = new Random();

@@ -1,13 +1,15 @@
-package com.kq.nio.backlog;
+package com.kq.nio.myserver1;
+
+import com.kq.nio.backlog.BacklogServerChanel;
 
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BacklogClient {
+public class MySocketClient {
 
     public static void main1(String[] args) throws Exception{
         for(int i=0;i<1000;i++) {
-            Socket socket = new Socket("localhost", BacklogServerChanel.PORT);
+            Socket socket = new Socket("localhost", MyServer1.PORT);
             socket.close();
             System.out.println("客户端连接个数为:"+(i+1));
         }
@@ -22,11 +24,11 @@ public class BacklogClient {
             int index = atomicLong.incrementAndGet();
             try {
 //                socket = new Socket("localhost", BacklogServerChanel.PORT);
-                socket = new Socket("172.16.5.1", BacklogServerChanel.PORT);
+                socket = new Socket("localhost", MyServer1.PORT);
 //                socket = new Socket(InetAddress.getLocalHost(), BacklogServerChanel.PORT);
                 System.out.println(Thread.currentThread().getName()+"");
-                socket.getOutputStream().write(String.valueOf(index).getBytes());
-                Thread.sleep(60000);
+                socket.getOutputStream().write(index);
+//                Thread.sleep(60000);
                 socket.close();
             } catch (Exception e) {
                 System.out.println("index="+index+e.getMessage());
@@ -34,7 +36,7 @@ public class BacklogClient {
             }
         };
 
-        for(int i=0;i<300;i++) {
+        for(int i=0;i<1;i++) {
             Thread t = new Thread(r);
             t.start();
         }
