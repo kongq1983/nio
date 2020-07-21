@@ -3,6 +3,8 @@ package com.kq.nio.answerserver;
 import com.kq.util.Constant;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
@@ -64,17 +66,36 @@ public class AnswerBIOClient {
 
     }
 
+    private void read1() throws Exception{
+        while(true) {
+            //服务器返回需要加\n
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("等待读数据");
+            String line = null;
+            while((line=bufferedReader.readLine())!=null) {
+                System.out.println("AnswerBIOClient read server data =" + line);
+            }
+
+        }
+
+    }
+
     private void read() throws Exception{
 
         while(true) {
             System.out.println("等待读数据");
-            String res = IOUtils.toString(socket.getInputStream(), "utf-8");
-            System.out.println("AnswerBIOClient read server data =" + res);
 
-            if (res != null && AnswerServer.RES_CONNECTION_OK.endsWith(res.trim())) {
-                System.out.println("AnswerBIOClient set isConnectionOk = true");
-                isConnectionOk = true;
+            byte[] bytes = new byte[512];
+            int readLength = socket.getInputStream().read(bytes);
+            System.out.println("readLength="+readLength);
+            while (readLength!=-1) {
+                String result = new String(bytes,0,readLength);
+                if(!isConnectionOk){
+                    isConnectionOk = result.equals(AnswerServer.RES_CONNECTION_OK);
+                    System.out.println("result="+result+" isConnectionOk="+isConnectionOk+" o:"+result.equals(AnswerServer.RES_CONNECTION_OK));
+                }
             }
+
         }
 
     }
@@ -82,13 +103,13 @@ public class AnswerBIOClient {
     private void write() throws Exception{
 
         while (true) {
-//            if (isConnectionOk) {
+            if (isConnectionOk) {
                 TimeUnit.SECONDS.sleep(5);
                 Long questionId = atomicLong.incrementAndGet();
                 System.out.println("客户端开始发送 questionId=" + questionId);
                 socket.getOutputStream().write(String.valueOf(questionId).getBytes());
                 socket.getOutputStream().flush();
-//            }
+            }
         }
 
     }
