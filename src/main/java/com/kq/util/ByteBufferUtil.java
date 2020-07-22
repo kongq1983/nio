@@ -20,4 +20,29 @@ public class ByteBufferUtil {
         return body;
     }
 
+    public static ByteBuffer byteBufferJoin(ByteBuffer byteBuffer1,ByteBuffer byteBuffer2) {
+
+        if(byteBuffer1==null){
+            return byteBuffer2;
+        }
+
+        if(byteBuffer2==null){
+            throw new RuntimeException("byteBuffer2不能为空！");
+        }
+
+
+        int limit1 = byteBuffer1.limit();
+        int limit2 = byteBuffer2.limit();
+
+        byte[] bytes = new byte[limit1+limit2];
+
+        System.arraycopy(byteBuffer1.array(),0,bytes,0,limit1);
+        System.arraycopy(byteBuffer2.array(),0,bytes,limit1,limit2);
+
+        ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+
+        return byteBuffer;
+
+    }
+
 }
