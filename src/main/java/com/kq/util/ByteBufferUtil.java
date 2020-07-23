@@ -20,14 +20,20 @@ public class ByteBufferUtil {
         return body;
     }
 
+    /**
+     * 注意返回合并后的ByteBuffer，一开始不需要调用flip
+     * @param byteBuffer1
+     * @param byteBuffer2
+     * @return
+     */
     public static ByteBuffer byteBufferJoin(ByteBuffer byteBuffer1,ByteBuffer byteBuffer2) {
-
-        if(byteBuffer1==null){
-            return byteBuffer2;
-        }
 
         if(byteBuffer2==null){
             throw new RuntimeException("byteBuffer2不能为空！");
+        }
+
+        if(byteBuffer1==null){
+            return byteBuffer2;
         }
 
 
@@ -42,6 +48,40 @@ public class ByteBufferUtil {
         ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 
         return byteBuffer;
+
+    }
+
+    public static ByteBuffer positionToLimitByteBuffer(ByteBuffer byteBuffer){
+        int position = byteBuffer.position();
+        int limit = byteBuffer.limit();
+
+        return ByteBuffer.wrap(byteBuffer.array(),position,limit);
+
+    }
+
+    /**
+     * 根据position和limit之间的数据，新生成1个ByteBuffer
+     * @param byteBuffer
+     */
+    public static ByteBuffer newByteBufferByPosition(ByteBuffer byteBuffer) {
+
+        if(byteBuffer==null) {
+            return byteBuffer;
+        }
+
+        int length = byteBuffer.limit()-byteBuffer.position();
+
+        if(length==0){
+            return null;
+        }
+
+        byte[] data = new byte[length];
+
+        System.arraycopy(byteBuffer.array(),byteBuffer.position(),data,0,length);
+
+        ByteBuffer result = ByteBuffer.wrap(data);
+
+        return result;
 
     }
 

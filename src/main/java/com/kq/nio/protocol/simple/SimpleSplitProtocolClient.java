@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** 1条多1条多的数据发送
+ * 演示客户端发多次数据(多个包组成1个完整的包)
  * @author kq
  * @date 2020-07-22 14:44
  * @since 2020-0630

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 接收客户端多个包，组成1个完整的数据
  * @author kq
  * @date 2020-07-21 18:38
  * @since 2020-0630
@@ -105,18 +106,25 @@ public class SimpleSplitProtocolServer implements MyRunnable {
             ByteBuffer thisReadByteBuffer = ByteBuffer.allocate(1024);
             socketChannel.read(thisReadByteBuffer);
             thisReadByteBuffer.flip();
-            System.out.println("1. 服务端byteBuffer="+thisReadByteBuffer);
+            System.out.println(index+". 服务端byteBuffer="+thisReadByteBuffer);
 
             ByteBuffer byteBuffer = ByteBufferUtil.byteBufferJoin(cacheByteBuffer,thisReadByteBuffer);
-            byteBuffer.flip();
-
+            System.out.println(index+". 附件cacheByteBuffer="+cacheByteBuffer);
+            System.out.println(index+". 合并的byteBuffer="+byteBuffer);
+            System.out.println(index+". start do bussiness");
 
             while (true && byteBuffer.hasRemaining()) {
+                System.out.println(index+". start do read data");
                 short magicNum = byteBuffer.getShort(); //position+2
                 //无符号
                 int magic = Short.toUnsignedInt(magicNum);
                 if(magic!=Constant.MAGIC_NUMBER) {
                     System.out.println("index="+index+",无效的Magic数字 magicNum=" + Constant.MAGIC_NUMBER + " magic=" + magic);
+
+                    byteBuffer.position(0);
+                    ByteBuffer newByteBuffer = ByteBufferUtil.newByteBufferByPosition(byteBuffer);
+                    System.out.println("attach0="+newByteBuffer);
+                    key.attach(newByteBuffer);
                     break;
                 }
                 // data的长度
@@ -125,7 +133,7 @@ public class SimpleSplitProtocolServer implements MyRunnable {
                 System.out.println("2. 服务端byteBuffer="+byteBuffer);
                 int remainSize = byteBuffer.limit()-byteBuffer.position();
                 System.out.println("remainSize="+remainSize);
-                if(remainSize>=length) {
+                if(remainSize>=length) { //这里只读1次完整的数据，如果有多条完整的数据，这里也只读1次,留着下次读
                     // 读取完  ， 把读取的删除掉
                     // 拷贝poisiston 至 limit的数据
                     byte[] datas = new byte[length];
@@ -134,6 +142,16 @@ public class SimpleSplitProtocolServer implements MyRunnable {
 
                     String request = new String(datas).trim();
                     System.out.println("index=" + index + " 客户端请求:" + request);
+
+                    ByteBuffer newByteBuffer = ByteBufferUtil.newByteBufferByPosition(byteBuffer);
+                    System.out.println("attach1="+newByteBuffer);
+                    key.attach(newByteBuffer);
+                    break;
+
+                }else {
+                    key.attach(byteBuffer);
+                    System.out.println("attach2="+byteBuffer);
+                    break;
                 }
 
             }
