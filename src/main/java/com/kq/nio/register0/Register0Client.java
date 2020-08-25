@@ -1,16 +1,15 @@
-package com.kq.nio.keepalive;
-
-import org.apache.commons.lang3.RandomStringUtils;
+package com.kq.nio.register0;
 
 import java.net.InetSocketAddress;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * KeepAliveClient
@@ -18,14 +17,16 @@ import java.util.Set;
  * @author kq
  * @date 2019-06-17
  */
-public class KeepAliveClient {
+public class Register0Client {
+
+    private static AtomicLong atomicLong = new AtomicLong();
 
     public static void main(String[] args) throws Exception{
         SocketChannel socketChannel = SocketChannel.open();
         Selector selector = Selector.open();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector, SelectionKey.OP_CONNECT);
-        socketChannel.connect(new InetSocketAddress("localhost", KeepAliveServer.port));
+        socketChannel.connect(new InetSocketAddress("localhost", Register0Server.port));
 //        socketChannel.connect(new InetSocketAddress("192.168.3.107", KeepAliveServer.port));
 //        socketChannel.connect(new InetSocketAddress("localhost", KeepAliveServer.port));
 
@@ -49,26 +50,14 @@ public class KeepAliveClient {
 
                 } else if (selectionKey.isWritable()) {// 可以开始写数据
 
-                    int foreach = random.nextInt(2);
-
-                    for(int i=0;i<foreach;i++) {
-                        ByteBuffer sendBuffer = ByteBuffer.allocate(10);
-
-                        byte[] bs = new byte[]{1,2,3,4,5,6,7,8,9,0};
-
-//                        String data = RandomStringUtils.random(10);
-                        sendBuffer.put(bs);
-
-                        ByteBuffer buffer = ByteBuffer.wrap("12345678901".getBytes());
-
-//                        socketChannel.write(sendBuffer);
+                        String randomStr = random.nextInt(Integer.MAX_VALUE)+"";
+                        ByteBuffer buffer = ByteBuffer.wrap(randomStr.getBytes());
                         socketChannel.write(buffer);
 
-                        System.out.println("sendData="+new String(bs));
+                        System.out.println(LocalDateTime.now()+",第"+atomicLong.incrementAndGet()+"次， sendData="+new String(buffer.array()));
 
-                    }
-
-                    Thread.sleep(2000l);
+//                    Thread.sleep(2000L);
+                    Thread.sleep(2L);
 
 
                 } else if (selectionKey.isReadable()) {// 可以开始读数据
