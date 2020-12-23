@@ -10,13 +10,13 @@ import java.nio.ByteBuffer;
 public class ByteBufferUtil {
 
 
-    public static String toString(ByteBuffer readBuffer) {
+    public static String toString(ByteBuffer readBuffer) throws Exception{
         readBuffer.flip();
         byte[] bytes = new byte[readBuffer.remaining()];
         //获取缓冲区并写入字节数组中
         readBuffer.get(bytes);
         //将字节数组转换为String类型
-        String body = new String(bytes);
+        String body = new String(bytes,"utf8");
         return body;
     }
 
