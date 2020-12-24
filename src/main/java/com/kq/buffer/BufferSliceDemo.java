@@ -2,6 +2,11 @@ package com.kq.buffer;
 
 import java.nio.ByteBuffer;
 
+/**
+ * slice()例子
+ * 创建新的字节缓冲区  其内容是此缓冲区的共享数组
+ * 底层的byte[] hb 是共享的
+ */
 public class BufferSliceDemo {
 
     public static void main1(String[] args) {
