@@ -10,7 +10,7 @@ import java.nio.channels.FileChannel;
 
 public class FileMappedDemoAppend0 {
 
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
         File file = new File("D:\\myprotocol\\mapper2");
 
         FileUtil.ensureDirOK(file.getParent());
@@ -42,8 +42,11 @@ public class FileMappedDemoAppend0 {
 
     }
 
-
-    public static void main(String[] args) {
+    /**
+     * 如果没有文件，直接调用这个也会生成1K文件
+     * @param args
+     */
+    public static void main2(String[] args) {
         File file = new File("D:\\myprotocol\\mapper2");
 
         FileUtil.ensureDirOK(file.getParent());
